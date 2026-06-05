@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cadastro de Veículo — Recuar Jamais Motors</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600;700&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold:#C9A84C;--gold-light:#E8C96A;--gold-dim:#8A6B2A;
+    --black:#080808;--surface:#111111;--surface2:#181818;--surface3:#202020;
+    --glass:rgba(255,255,255,0.04);--glass-border:rgba(201,168,76,0.18);
+    --text:#E8E0D0;--text-muted:#7A7264;--green:#2ECC71;--red:#C0392B;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--black);color:var(--text);font-family:'Montserrat',sans-serif;font-weight:300;min-height:100vh;padding:0 0 80px;overflow-x:hidden}
+  body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 60% 40% at 80% 10%,rgba(201,168,76,0.06) 0%,transparent 70%),radial-gradient(ellipse 40% 60% at 10% 80%,rgba(201,168,76,0.04) 0%,transparent 70%);pointer-events:none;z-index:0}
+
+  header{position:relative;z-index:10;padding:48px 32px 32px;text-align:center;border-bottom:1px solid var(--glass-border)}
+  .brand-line{display:flex;align-items:center;justify-content:center;gap:16px;margin-bottom:8px}
+  .brand-divider{width:48px;height:1px;background:linear-gradient(90deg,transparent,var(--gold))}
+  .brand-divider.r{background:linear-gradient(90deg,var(--gold),transparent)}
+  .brand-name{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--gold-light)}
+  .brand-tagline{font-size:10px;letter-spacing:.35em;text-transform:uppercase;color:var(--text-muted);margin-bottom:24px}
+  .form-title{font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:300;color:var(--text);margin-bottom:6px}
+  .form-subtitle{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--text-muted)}
+
+  .progress-bar-wrap{position:sticky;top:0;z-index:50;background:rgba(8,8,8,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--glass-border);padding:10px 32px;display:flex;align-items:center;gap:16px}
+  .progress-label{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--text-muted);white-space:nowrap}
+  .progress-track{flex:1;height:2px;background:var(--surface3);border-radius:2px;overflow:hidden}
+  .progress-fill{height:100%;background:linear-gradient(90deg,var(--gold-dim),var(--gold-light));width:0%;transition:width .4s ease;border-radius:2px}
+  .progress-pct{font-size:11px;color:var(--gold);font-weight:500;min-width:36px;text-align:right}
+
+  main{position:relative;z-index:10;max-width:820px;margin:0 auto;padding:40px 24px 0}
+
+  .section{margin-bottom:36px;background:var(--glass);border:1px solid var(--glass-border);border-radius:2px;overflow:hidden;animation:fadeUp .5s ease both}
+  .section:nth-child(1){animation-delay:.05s}.section:nth-child(2){animation-delay:.1s}.section:nth-child(3){animation-delay:.15s}.section:nth-child(4){animation-delay:.2s}.section:nth-child(5){animation-delay:.25s}.section:nth-child(6){animation-delay:.3s}.section:nth-child(7){animation-delay:.35s}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+  .section-header{display:flex;align-items:center;gap:12px;padding:16px 24px;background:rgba(201,168,76,.06);border-bottom:1px solid var(--glass-border)}
+  .section-number{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:300;color:var(--gold);line-height:1;min-width:28px}
+  .section-title{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:600;color:var(--gold-light);letter-spacing:.06em;text-transform:uppercase}
+  .section-status{margin-left:auto;font-size:10px;letter-spacing:.1em;color:var(--text-muted)}
+  .section-status.done{color:var(--green)}
+  .section-body{padding:24px}
+
+  .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px 24px}
+  @media(max-width:560px){.grid-2{grid-template-columns:1fr}}
+  .span-2{grid-column:1/-1}
+
+  .field{display:flex;flex-direction:column;gap:6px}
+  .field label{font-size:9px;letter-spacing:.28em;text-transform:uppercase;color:var(--text-muted);font-weight:500}
+  .field label .req{color:var(--gold);margin-left:3px}
+  .field input,.field select,.field textarea{background:var(--surface2);border:1px solid rgba(201,168,76,.15);border-radius:1px;color:var(--text);font-family:'Montserrat',sans-serif;font-size:13px;font-weight:400;padding:10px 14px;transition:border-color .2s,background .2s;outline:none;-webkit-appearance:none;appearance:none}
+  .field select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23C9A84C' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px}
+  .field select option{background:var(--surface);color:var(--text)}
+  .field input:focus,.field select:focus,.field textarea:focus{border-color:var(--gold);background:var(--surface3)}
+  .field input.invalid,.field select.invalid,.field textarea.invalid{border-color:var(--red)!important}
+  .field input::placeholder,.field textarea::placeholder{color:var(--text-muted);opacity:.6}
+  .field textarea{resize:vertical;min-height:80px;line-height:1.6}
+  .field-note{font-size:10px;color:var(--text-muted);margin-top:4px;letter-spacing:.05em;line-height:1.5}
+
+  .checkbox-group{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px 20px}
+  .checkbox-item{display:flex;align-items:center;gap:10px;cursor:pointer;padding:8px 12px;border:1px solid transparent;border-radius:1px;transition:border-color .2s,background .2s}
+  .checkbox-item:hover{background:rgba(201,168,76,.04);border-color:rgba(201,168,76,.12)}
+  .checkbox-item input[type="checkbox"]{-webkit-appearance:none;appearance:none;width:16px;height:16px;border:1px solid var(--gold-dim);border-radius:1px;background:var(--surface2);flex-shrink:0;cursor:pointer;transition:all .15s;position:relative}
+  .checkbox-item input[type="checkbox"]:checked{background:var(--gold);border-color:var(--gold)}
+  .checkbox-item input[type="checkbox"]:checked::after{content:'';position:absolute;left:4px;top:1px;width:5px;height:9px;border:1.5px solid #080808;border-top:none;border-left:none;transform:rotate(45deg)}
+  .checkbox-item span{font-size:12px;color:var(--text);line-height:1.3}
+
+  .radio-group{display:flex;gap:12px;flex-wrap:wrap;margin-top:4px}
+  .radio-item{display:flex;align-items:center;gap:8px;cursor:pointer;padding:8px 16px;border:1px solid rgba(201,168,76,.2);border-radius:1px;transition:all .15s;background:var(--surface2)}
+  .radio-item:hover{background:rgba(201,168,76,.06);border-color:var(--gold)}
+  .radio-item input[type="radio"]{-webkit-appearance:none;appearance:none;width:14px;height:14px;border:1px solid var(--gold-dim);border-radius:50%;background:transparent;position:relative;flex-shrink:0;cursor:pointer}
+  .radio-item input[type="radio"]:checked{border-color:var(--gold)}
+  .radio-item input[type="radio"]:checked::after{content:'';position:absolute;inset:3px;border-radius:50%;background:var(--gold)}
+  .radio-item span{font-size:12px;color:var(--text);font-weight:500}
+
+  .divider{height:1px;background:var(--glass-border);margin:20px 0}
+  .subsection-label{font-size:9px;letter-spacing:.28em;text-transform:uppercase;color:var(--gold-dim);font-weight:500;margin-bottom:12px;padding-bottom:6px;border-bottom:1px solid rgba(201,168,76,.1)}
+
+  /* FOTO UPLOAD */
+  .upload-zone{border:1px dashed rgba(201,168,76,.3);border-radius:2px;padding:32px 24px;text-align:center;cursor:pointer;transition:all .2s;background:var(--surface2);position:relative}
+  .upload-zone:hover,.upload-zone.drag{border-color:var(--gold);background:rgba(201,168,76,.04)}
+  .upload-zone input[type="file"]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+  .upload-icon{font-size:32px;margin-bottom:10px;opacity:.6}
+  .upload-text{font-size:12px;color:var(--text-muted);line-height:1.6}
+  .upload-text strong{color:var(--gold);font-weight:500}
+  .upload-limit{font-size:10px;color:var(--text-muted);margin-top:6px;letter-spacing:.05em}
+
+  .photo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px;margin-top:16px}
+  .photo-thumb{position:relative;aspect-ratio:4/3;border-radius:1px;overflow:hidden;border:1px solid var(--glass-border)}
+  .photo-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+  .photo-thumb .remove-btn{position:absolute;top:4px;right:4px;background:rgba(8,8,8,.8);border:none;color:var(--red);width:22px;height:22px;border-radius:1px;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;line-height:1}
+  .photo-thumb .photo-name{position:absolute;bottom:0;left:0;right:0;background:rgba(8,8,8,.7);font-size:9px;padding:3px 6px;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .photo-counter{font-size:11px;color:var(--gold);margin-top:10px;letter-spacing:.1em}
+
+  .upload-progress{margin-top:16px;display:none}
+  .upload-progress-bar{height:2px;background:var(--surface3);border-radius:2px;overflow:hidden;margin-bottom:6px}
+  .upload-progress-fill{height:100%;background:linear-gradient(90deg,var(--gold-dim),var(--gold-light));width:0%;transition:width .3s ease}
+  .upload-progress-text{font-size:10px;color:var(--text-muted);letter-spacing:.1em;text-align:center}
+
+  /* SUBMIT */
+  .submit-zone{position:relative;z-index:10;max-width:820px;margin:0 auto;padding:0 24px 80px;text-align:center}
+  .submit-btn{background:linear-gradient(135deg,var(--gold) 0%,var(--gold-light) 50%,var(--gold) 100%);background-size:200% 200%;color:#080808;border:none;padding:16px 56px;font-family:'Montserrat',sans-serif;font-size:11px;font-weight:600;letter-spacing:.3em;text-transform:uppercase;cursor:pointer;border-radius:1px;transition:background-position .4s,transform .15s,box-shadow .3s;box-shadow:0 4px 32px rgba(201,168,76,.2);min-width:260px;display:inline-flex;align-items:center;justify-content:center;gap:10px}
+  .submit-btn:hover:not(:disabled){background-position:right center;transform:translateY(-1px);box-shadow:0 8px 48px rgba(201,168,76,.35)}
+  .submit-btn:disabled{opacity:.6;cursor:not-allowed}
+  .submit-btn .spinner{width:14px;height:14px;border:2px solid rgba(8,8,8,.3);border-top-color:#080808;border-radius:50%;animation:spin .7s linear infinite;display:none}
+  .submit-btn.loading .btn-text{display:none}
+  .submit-btn.loading .spinner{display:block}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .submit-note{font-size:10px;color:var(--text-muted);margin-top:14px;letter-spacing:.1em}
+
+  .toast{position:fixed;bottom:32px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--surface3);border:1px solid var(--glass-border);padding:14px 28px;border-radius:2px;z-index:200;font-size:13px;letter-spacing:.05em;transition:transform .35s cubic-bezier(.34,1.56,.64,1),opacity .3s;opacity:0;box-shadow:0 8px 40px rgba(0,0,0,.6);display:flex;align-items:center;gap:12px}
+  .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+  .toast.success{border-color:rgba(46,204,113,.4)}
+  .toast.error{border-color:rgba(192,57,43,.4)}
+</style>
+</head>
+<body>
+
+<div id="toast" class="toast">
+  <span id="toastIcon"></span>
+  <span id="toastMsg"></span>
+</div>
+
+<header>
+  <div class="brand-tagline">Ficha de Captação</div>
+  <div class="brand-line">
+    <div class="brand-divider"></div>
+    <div class="brand-name">Recuar Jamais Motors</div>
+    <div class="brand-divider r"></div>
+  </div>
+  <div class="form-title">Cadastro de Veículo</div>
+  <div class="form-subtitle">Preencha todas as informações para registro do anúncio</div>
+</header>
+
+<div class="progress-bar-wrap">
+  <span class="progress-label">Progresso</span>
+  <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+  <span class="progress-pct" id="progressPct">0%</span>
+</div>
+
+<main>
+
+  <!-- 01 DADOS BÁSICOS -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-number">01</span>
+      <span class="section-title">Dados Básicos</span>
+      <span class="section-status" id="status1"></span>
+    </div>
+    <div class="section-body">
+      <div class="grid-2">
+        <div class="field"><label>Marca <span class="req">*</span></label><input type="text" id="marca" placeholder="Ex: Toyota, Honda, BMW..." data-required></div>
+        <div class="field"><label>Modelo <span class="req">*</span></label><input type="text" id="modelo" placeholder="Ex: Corolla, Civic, X5..." data-required></div>
+        <div class="field"><label>Versão / Trim</label><input type="text" id="versao" placeholder="Ex: XEi, Touring, Sport..."></div>
+        <div class="field"><label>Ano de Fabricação <span class="req">*</span></label><input type="number" id="ano_fab" placeholder="Ex: 2024" min="1990" max="2025" data-required></div>
+        <div class="field"><label>Ano do Modelo <span class="req">*</span></label><input type="number" id="ano_modelo" placeholder="Ex: 2024" min="1990" max="2026" data-required></div>
+        <div class="field"><label>Quilometragem (km) <span class="req">*</span></label><input type="number" id="km" placeholder="Ex: 40000" data-required></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 02 CARACTERÍSTICAS -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-number">02</span>
+      <span class="section-title">Características</span>
+      <span class="section-status" id="status2"></span>
+    </div>
+    <div class="section-body">
+      <div class="grid-2">
+        <div class="field"><label>Cor <span class="req">*</span></label>
+          <select id="cor" data-required><option value="" disabled selected>Selecione</option><option>Preto</option><option>Branco</option><option>Prata</option><option>Cinza</option><option>Vermelho</option><option>Azul</option><option>Verde</option><option>Dourado / Champagne</option><option>Bege / Areia</option><option>Marrom</option><option>Outra</option></select></div>
+        <div class="field"><label>Carroceria <span class="req">*</span></label>
+          <select id="carroceria" data-required><option value="" disabled selected>Selecione</option><option>Hatchback</option><option>Sedan</option><option>SUV</option><option>Picape</option><option>Coupé</option><option>Conversível</option><option>Minivan</option><option>Station Wagon</option><option>Crossover</option></select></div>
+        <div class="field"><label>Portas <span class="req">*</span></label>
+          <select id="portas" data-required><option value="" disabled selected>Selecione</option><option>2</option><option>3</option><option>4</option><option>5</option></select></div>
+        <div class="field"><label>Câmbio <span class="req">*</span></label>
+          <select id="cambio" data-required><option value="" disabled selected>Selecione</option><option>Manual</option><option>Automático</option><option>Automatizado (CVT)</option><option>Automatizado (DCT)</option><option>Semi-automático</option></select></div>
+        <div class="field"><label>Combustível <span class="req">*</span></label>
+          <select id="combustivel" data-required><option value="" disabled selected>Selecione</option><option>Gasolina</option><option>Álcool</option><option>Gasolina e Álcool (Flex)</option><option>Diesel</option><option>Elétrico</option><option>Híbrido (Flex + Elétrico)</option><option>GNV</option></select></div>
+        <div class="field"><label>Final da Placa <span class="req">*</span></label>
+          <select id="final_placa" data-required><option value="" disabled selected>Selecione</option><option>0</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option></select></div>
+      </div>
+      <div class="divider"></div>
+      <div class="subsection-label">Blindagem</div>
+      <div class="grid-2">
+        <div class="field"><label>O veículo é blindado?</label>
+          <div class="radio-group"><label class="radio-item"><input type="radio" name="blindado" value="Sim"><span>Sim</span></label><label class="radio-item"><input type="radio" name="blindado" value="Não"><span>Não</span></label></div></div>
+        <div class="field"><label>Nível de blindagem</label><input type="text" id="nivel_blindagem" placeholder="Ex: Nível III-A..."><span class="field-note">Preencher apenas se blindado</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 03 DOCUMENTAÇÃO -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-number">03</span>
+      <span class="section-title">Documentação e Histórico</span>
+    </div>
+    <div class="section-body">
+      <div class="grid-2">
+        <div class="field"><label>IPVA está pago?</label><div class="radio-group"><label class="radio-item"><input type="radio" name="ipva" value="Sim"><span>Sim</span></label><label class="radio-item"><input type="radio" name="ipva" value="Não"><span>Não</span></label></div></div>
+        <div class="field"><label>Veículo licenciado?</label><div class="radio-group"><label class="radio-item"><input type="radio" name="licenciado" value="Sim"><span>Sim</span></label><label class="radio-item"><input type="radio" name="licenciado" value="Não"><span>Não</span></label></div></div>
+        <div class="field"><label>Único dono?</label><div class="radio-group"><label class="radio-item"><input type="radio" name="unico_dono" value="Sim"><span>Sim</span></label><label class="radio-item"><input type="radio" name="unico_dono" value="Não"><span>Não</span></label></div></div>
+        <div class="field"><label>Qtd. donos anteriores</label><input type="number" id="qtd_donos" placeholder="Ex: 2" min="0" max="20"></div>
+        <div class="field span-2"><label>Revisões pela agenda do fabricante?</label><div class="radio-group"><label class="radio-item"><input type="radio" name="revisoes_agenda" value="Sim, todas em dia"><span>Sim, todas em dia</span></label><label class="radio-item"><input type="radio" name="revisoes_agenda" value="Parcialmente"><span>Parcialmente</span></label><label class="radio-item"><input type="radio" name="revisoes_agenda" value="Não"><span>Não</span></label></div></div>
+        <div class="field span-2"><label>Revisões pela concessionária?</label><div class="radio-group"><label class="radio-item"><input type="radio" name="revisoes_concessionaria" value="Sim, todas"><span>Sim, todas</span></label><label class="radio-item"><input type="radio" name="revisoes_concessionaria" value="Algumas"><span>Algumas</span></label><label class="radio-item"><input type="radio" name="revisoes_concessionaria" value="Não"><span>Não</span></label></div></div>
+        <div class="field span-2"><label>Aceita troca?</label><div class="radio-group"><label class="radio-item"><input type="radio" name="aceita_troca" value="Sim"><span>Sim</span></label><label class="radio-item"><input type="radio" name="aceita_troca" value="Não"><span>Não</span></label></div></div>
+        <div class="field span-2"><label>Obs. documentação / restrições</label><textarea id="obs_documentacao" placeholder="Multas, financiamento, alienação, recall, sinistro anterior..."></textarea></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 04 OPCIONAIS -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-number">04</span>
+      <span class="section-title">Opcionais e Equipamentos</span>
+    </div>
+    <div class="section-body">
+      <p class="subsection-label">Marque todos os itens presentes no veículo</p>
+      <div class="checkbox-group">
+        <label class="checkbox-item"><input type="checkbox" name="opcional" value="Airbag"><span>Airbag</span></label>
+        <label class="checkbox-item"><input type="checkbox" name="opcional" value="Alarme"><span>Alarme</span></label>
+        <label class="checkbox-item"><input type="checkbox" name="opcional" value="Ar quente"><span>Ar quente</span></label>
+        <label class="checkbox-item"><input type="checkbox" name="opcional" value="Ar condicionado"><span>Ar condicionado</span></label>
+        <label class="checkbox-item"><input type="checkbox" name="opcional" value="Banco com regulagem de altura"><span>Banco com regulagem de altura</span></label>
+        <label class="checkbox-item"><input type="checkbox" name="opcional" value="Bancos em couro"><span>Bancos em couro</span></label>
+        <label class="checkbox-item"><input type="checkbox" name="opcional" value="Computador de bordo"><span>Computador de bordo</span></label>
+        <label class="checkbox-item"><input type="checkbox" name="opcional" value="Controle de tração"><span>Controle de tração</span></label>
+        <label class="checkbox-item"><input type="checkbox" name="opcional" value="Cruise control"><span>Cruise control</span></label>
+        <label class="checkbox-item"><input type="checkbox" name="opcional" value="Desembaçador traseiro"><span>Desembaçador traseiro</span></label>
+        <label class="checkbox-item"><input type="checkbox" name="opcional" value="Encosto de cabeça traseiro"><span>Encosto de cabeça traseiro</span></label>
+        <label class="checkbox-item"><input type="checkbox" name="opcional" value="Farol de xenônio"><span>Farol de xenônio</span></label>
+        <label class="checkbox-item"><input type="checkbox" name="opcional" value="Freio ABS"><span>Freio ABS</span></label>
+        <label class="checkbox-item"><input type="checkbox" name="opcional" value="GPS"><span>GPS</span></label>
+        <label class="checkbox-item"><input type="checkbox" name="opcional" value="Limpador traseiro"><span>Limpador traseiro</span></label>
+        <label class="checkbox-item"><input type="checkbox" name="opcional" value="Rádio"><span>Rádio</span></label>
+        <label class="checkbox-item"><input type="checkbox" name="opcional" value="Retrovisores elétricos"><span>Retrovisores elétricos</span></label>
+        <label class="checkbox-item"><input type="checkbox" name="opcional" value="Retrovisor fotocrômico"><span>Retrovisor fotocrômico</span></label>
+        <label class="checkbox-item"><input type="checkbox" name="opcional" value="Rodas de liga leve"><span>Rodas de liga leve</span></label>
+        <label class="checkbox-item"><input type="checkbox" name="opcional" value="Sensor de chuva"><span>Sensor de chuva</span></label>
+        <label class="checkbox-item"><input type="checkbox" name="opcional" value="Sensor de estacionamento"><span>Sensor de estacionamento</span></label>
+        <label class="checkbox-item"><input type="checkbox" name="opcional" value="Travas elétricas"><span>Travas elétricas</span></label>
+        <label class="checkbox-item"><input type="checkbox" name="opcional" value="Vidros elétricos"><span>Vidros elétricos</span></label>
+        <label class="checkbox-item"><input type="checkbox" name="opcional" value="Volante com regulagem de altura"><span>Volante com regulagem de altura</span></label>
+      </div>
+      <div class="divider"></div>
+      <div class="field"><label>Outros opcionais</label><textarea id="outros_opcionais" placeholder="Multimídia, teto solar, câmera de ré, head-up display..."></textarea></div>
+    </div>
+  </div>
+
+  <!-- 05 VISTORIA -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-number">05</span>
+      <span class="section-title">Vistoria e Condição</span>
+    </div>
+    <div class="section-body">
+      <div class="grid-2">
+        <div class="field"><label>Possui laudo de vistoria?</label><div class="radio-group"><label class="radio-item"><input type="radio" name="possui_laudo" value="Sim"><span>Sim</span></label><label class="radio-item"><input type="radio" name="possui_laudo" value="Não"><span>Não</span></label></div></div>
+        <div class="field"><label>Empresa vistoriadora</label><input type="text" id="vistoriadora" placeholder="Ex: Vistoriado, Cautelar Digital..."></div>
+        <div class="field span-2"><label>Itens vistoriados</label>
+          <div class="checkbox-group" style="margin-top:8px">
+            <label class="checkbox-item"><input type="checkbox" name="vistoria" value="Estrutura"><span>Estrutura</span></label>
+            <label class="checkbox-item"><input type="checkbox" name="vistoria" value="Indício de sinistro"><span>Indício de sinistro</span></label>
+            <label class="checkbox-item"><input type="checkbox" name="vistoria" value="Funilaria"><span>Funilaria</span></label>
+            <label class="checkbox-item"><input type="checkbox" name="vistoria" value="Interior"><span>Interior</span></label>
+            <label class="checkbox-item"><input type="checkbox" name="vistoria" value="Débitos"><span>Débitos</span></label>
+            <label class="checkbox-item"><input type="checkbox" name="vistoria" value="Restrições"><span>Restrições</span></label>
+          </div>
+        </div>
+        <div class="field span-2"><label>Estado geral de conservação</label>
+          <select id="estado_geral"><option value="" disabled selected>Selecione</option><option>Excelente — como zero km</option><option>Ótimo — acima da média</option><option>Bom — pequenos detalhes estéticos</option><option>Regular — requer atenção</option><option>A revisar — intervenção necessária</option></select></div>
+        <div class="field span-2"><label>Obs. condição do veículo</label><textarea id="obs_condicao" placeholder="Arranhões, amassados, peças trocadas, modificações..."></textarea></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 06 FOTOS -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-number">06</span>
+      <span class="section-title">Fotos do Veículo</span>
+      <span class="section-status" id="photoStatus"></span>
+    </div>
+    <div class="section-body">
+      <div class="upload-zone" id="uploadZone">
+        <input type="file" id="fotoInput" accept="image/*" multiple>
+        <div class="upload-icon">📷</div>
+        <div class="upload-text"><strong>Clique para selecionar</strong> ou arraste as fotos aqui</div>
+        <div class="upload-limit">JPG, PNG, WEBP · Máximo 20 fotos · 10 MB por foto</div>
+      </div>
+      <div class="photo-grid" id="photoGrid"></div>
+      <div class="photo-counter" id="photoCounter"></div>
+      <div class="upload-progress" id="uploadProgress">
+        <div class="upload-progress-bar"><div class="upload-progress-fill" id="uploadProgressFill"></div></div>
+        <div class="upload-progress-text" id="uploadProgressText">Enviando fotos...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 07 PRECIFICAÇÃO E CONTATO -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-number">07</span>
+      <span class="section-title">Precificação e Contato</span>
+      <span class="section-status" id="status7"></span>
+    </div>
+    <div class="section-body">
+      <div class="grid-2">
+        <div class="field"><label>Valor pedido (R$) <span class="req">*</span></label><input type="number" id="valor" placeholder="Ex: 95000" data-required></div>
+        <div class="field"><label>Aceita negociação?</label><div class="radio-group"><label class="radio-item"><input type="radio" name="aceita_negociacao" value="Sim"><span>Sim</span></label><label class="radio-item"><input type="radio" name="aceita_negociacao" value="Não"><span>Não</span></label></div></div>
+        <div class="field"><label>Nome do vendedor <span class="req">*</span></label><input type="text" id="nome_vendedor" placeholder="Nome completo" data-required></div>
+        <div class="field"><label>Telefone / WhatsApp <span class="req">*</span></label><input type="tel" id="telefone" placeholder="(44) 99999-9999" data-required></div>
+        <div class="field span-2"><label>Cidade / Estado <span class="req">*</span></label><input type="text" id="cidade" placeholder="Ex: Cascavel – PR" data-required></div>
+        <div class="field span-2"><label>Disponibilidade para visita</label><input type="text" id="disponibilidade" placeholder="Ex: Seg a Sex 9h–18h, fins de semana com agendamento"></div>
+        <div class="field span-2"><label>Observações adicionais</label><textarea id="obs_vendedor" placeholder="Qualquer detalhe relevante não coberto acima..."></textarea></div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<div class="submit-zone">
+  <button class="submit-btn" id="submitBtn" onclick="submitForm()">
+    <span class="btn-text">Registrar Veículo</span>
+    <span class="spinner"></span>
+  </button>
+  <p class="submit-note">Campos com * são obrigatórios · Dados e fotos salvos automaticamente na nuvem</p>
+</div>
+
+<script>
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwXE2fro_YcWOijwQZV-B10tJyBLNdCmCbXa3P6CpkzIX_qSIsW7Sb_JxK6tcvardEQZg/exec';
+const MAX_PHOTOS = 20;
+const MAX_SIZE_MB = 10;
+
+let selectedPhotos = [];
+
+// ── Fotos ──────────────────────────────────────────────────
+const fotoInput   = document.getElementById('fotoInput');
+const photoGrid   = document.getElementById('photoGrid');
+const photoCounter= document.getElementById('photoCounter');
+const uploadZone  = document.getElementById('uploadZone');
+
+fotoInput.addEventListener('change', handleFiles);
+
+uploadZone.addEventListener('dragover', e => { e.preventDefault(); uploadZone.classList.add('drag'); });
+uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('drag'));
+uploadZone.addEventListener('drop', e => {
+  e.preventDefault();
+  uploadZone.classList.remove('drag');
+  handleFiles({ target: { files: e.dataTransfer.files } });
+});
+
+function handleFiles(e) {
+  const files = Array.from(e.target.files);
+  files.forEach(file => {
+    if (selectedPhotos.length >= MAX_PHOTOS) { showToast(`Limite de ${MAX_PHOTOS} fotos atingido.`, 'error'); return; }
+    if (file.size > MAX_SIZE_MB * 1024 * 1024) { showToast(`"${file.name}" excede ${MAX_SIZE_MB}MB.`, 'error'); return; }
+    if (!file.type.startsWith('image/')) return;
+    selectedPhotos.push(file);
+  });
+  renderThumbs();
+  fotoInput.value = '';
+}
+
+function renderThumbs() {
+  photoGrid.innerHTML = '';
+  selectedPhotos.forEach((file, i) => {
+    const url  = URL.createObjectURL(file);
+    const div  = document.createElement('div');
+    div.className = 'photo-thumb';
+    div.innerHTML = `<img src="${url}" alt="foto ${i+1}"><button class="remove-btn" onclick="removePhoto(${i})">✕</button><div class="photo-name">${file.name}</div>`;
+    photoGrid.appendChild(div);
+  });
+  const c = selectedPhotos.length;
+  photoCounter.textContent = c > 0 ? `${c} foto${c>1?'s':''} selecionada${c>1?'s':''}` : '';
+  document.getElementById('photoStatus').textContent = c > 0 ? `${c} foto${c>1?'s':''}` : '';
+  document.getElementById('photoStatus').className = 'section-status' + (c > 0 ? ' done' : '');
+}
+
+function removePhoto(i) {
+  selectedPhotos.splice(i, 1);
+  renderThumbs();
+}
+
+// ── Helpers ────────────────────────────────────────────────
+function getRadio(name) {
+  const el = document.querySelector(`input[name="${name}"]:checked`);
+  return el ? el.value : '';
+}
+function getChecked(name) {
+  return Array.from(document.querySelectorAll(`input[name="${name}"]:checked`)).map(el => el.value).join(', ');
+}
+
+// ── Progress bar ───────────────────────────────────────────
+function updateProgress() {
+  const required = document.querySelectorAll('[data-required]');
+  const filled   = Array.from(required).filter(el => el.value && el.value.trim() !== '');
+  const pct      = Math.round((filled.length / required.length) * 100);
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressPct').textContent  = pct + '%';
+}
+document.querySelectorAll('input,select,textarea').forEach(el => {
+  el.addEventListener('input', updateProgress);
+  el.addEventListener('change', updateProgress);
+});
+
+// ── Validação ──────────────────────────────────────────────
+function validate() {
+  let valid = true;
+  document.querySelectorAll('[data-required]').forEach(el => {
+    el.classList.remove('invalid');
+    if (!el.value || el.value.trim() === '') { el.classList.add('invalid'); valid = false; }
+  });
+  return valid;
+}
+
+// ── Toast ──────────────────────────────────────────────────
+function showToast(msg, type = 'success') {
+  const toast = document.getElementById('toast');
+  document.getElementById('toastMsg').textContent = msg;
+  document.getElementById('toastIcon').textContent = type === 'success' ? '✓' : '✕';
+  toast.className = `toast ${type} show`;
+  setTimeout(() => { toast.className = 'toast'; }, 4500);
+}
+
+// ── Converte File para base64 ──────────────────────────────
+function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload  = () => resolve(reader.result.split(',')[1]);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+// ── Submit ─────────────────────────────────────────────────
+async function submitForm() {
+  if (!validate()) {
+    showToast('Preencha os campos obrigatórios marcados em vermelho.', 'error');
+    document.querySelector('.invalid')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
+
+  const btn = document.getElementById('submitBtn');
+  btn.classList.add('loading');
+  btn.disabled = true;
+
+  // Converter fotos para base64
+  let fotosB64 = [];
+  if (selectedPhotos.length > 0) {
+    const progWrap = document.getElementById('uploadProgress');
+    const progFill = document.getElementById('uploadProgressFill');
+    const progText = document.getElementById('uploadProgressText');
+    progWrap.style.display = 'block';
+
+    for (let i = 0; i < selectedPhotos.length; i++) {
+      const file = selectedPhotos[i];
+      progText.textContent = `Preparando foto ${i+1} de ${selectedPhotos.length}...`;
+      progFill.style.width = Math.round(((i+1) / selectedPhotos.length) * 100) + '%';
+      try {
+        const b64 = await fileToBase64(file);
+        fotosB64.push({ name: file.name, type: file.type, data: b64 });
+      } catch(err) {
+        console.error('Erro ao converter foto:', err);
+      }
+    }
+    progText.textContent = 'Enviando para o Google Drive...';
+  }
+
+  const payload = {
+    marca: document.getElementById('marca').value,
+    modelo: document.getElementById('modelo').value,
+    versao: document.getElementById('versao').value,
+    ano_fab: document.getElementById('ano_fab').value,
+    ano_modelo: document.getElementById('ano_modelo').value,
+    km: document.getElementById('km').value,
+    cor: document.getElementById('cor').value,
+    carroceria: document.getElementById('carroceria').value,
+    portas: document.getElementById('portas').value,
+    cambio: document.getElementById('cambio').value,
+    combustivel: document.getElementById('combustivel').value,
+    final_placa: document.getElementById('final_placa').value,
+    blindado: getRadio('blindado'),
+    nivel_blindagem: document.getElementById('nivel_blindagem').value,
+    ipva: getRadio('ipva'),
+    licenciado: getRadio('licenciado'),
+    unico_dono: getRadio('unico_dono'),
+    qtd_donos: document.getElementById('qtd_donos').value,
+    revisoes_agenda: getRadio('revisoes_agenda'),
+    revisoes_concessionaria: getRadio('revisoes_concessionaria'),
+    aceita_troca: getRadio('aceita_troca'),
+    obs_documentacao: document.getElementById('obs_documentacao').value,
+    opcionais: getChecked('opcional'),
+    outros_opcionais: document.getElementById('outros_opcionais').value,
+    possui_laudo: getRadio('possui_laudo'),
+    vistoriadora: document.getElementById('vistoriadora').value,
+    itens_vistoriados: getChecked('vistoria'),
+    estado_geral: document.getElementById('estado_geral').value,
+    obs_condicao: document.getElementById('obs_condicao').value,
+    valor: document.getElementById('valor').value,
+    aceita_negociacao: getRadio('aceita_negociacao'),
+    nome_vendedor: document.getElementById('nome_vendedor').value,
+    telefone: document.getElementById('telefone').value,
+    cidade: document.getElementById('cidade').value,
+    disponibilidade: document.getElementById('disponibilidade').value,
+    obs_vendedor: document.getElementById('obs_vendedor').value,
+    fotos: fotosB64,
+    origem: 'cadastro.html'
+  };
+
+  try {
+    await fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+
+    document.getElementById('uploadProgress').style.display = 'none';
+    const nFotos = fotosB64.length;
+    const msg = nFotos > 0
+      ? `Veículo registrado com ${nFotos} foto${nFotos>1?'s':''}!`
+      : 'Veículo registrado com sucesso!';
+    showToast(msg, 'success');
+
+    setTimeout(() => {
+      if (confirm('Veículo registrado! Limpar formulário para novo cadastro?')) location.reload();
+    }, 1500);
+
+  } catch (err) {
+    showToast('Erro ao enviar. Verifique sua conexão.', 'error');
+    console.error(err);
+    document.getElementById('uploadProgress').style.display = 'none';
+  } finally {
+    btn.classList.remove('loading');
+    btn.disabled = false;
+  }
+}
+</script>
+</body>
+</html>

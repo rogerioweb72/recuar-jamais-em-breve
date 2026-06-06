@@ -31,6 +31,8 @@
 <meta name="twitter:image" content="https://recuarjamaismotors.com.br/breve-Open-Graph.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="font" type="font/woff2" crossorigin href="https://fonts.gstatic.com/s/rajdhani/v17/LDIxapCSOBg7S-QT7pb6.woff2">
+<link rel="preload" as="font" type="font/woff2" crossorigin href="https://fonts.gstatic.com/s/sairacondensed/v16/EJRLQgErUM8E_Lgh0bD1VDeQPEhEoA.woff2">
 <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;700&family=Saira+Condensed:wght@300;400;700;900&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -405,7 +407,7 @@
     animation: word-appear 0.75s cubic-bezier(0.22,1,0.36,1) forwards;
   }
 
-  .headline { text-align: center; }
+  .headline { text-align: center; min-height: 160px; }
 
   .hl-eyebrow {
     font-family: 'Saira Condensed', sans-serif;
@@ -518,6 +520,7 @@
     .corner-tl { top:14px; left:14px; } .corner-tr { top:14px; right:14px; }
     .corner-bl { bottom:14px; left:14px; } .corner-br { bottom:14px; right:14px; }
     .line-h-top { top:6%; } .line-h-bottom { bottom:6%; }
+    .headline { min-height: 120px; }
   }
   @media (max-height: 600px) {
     .main { padding:36px 24px; }
@@ -594,7 +597,7 @@
 <!-- CAMADA 10: CONTEÚDO -->
 <main class="main" role="main">
   <div class="logo-wrap">
-    <div class="logo-main"><img src="LOGO-RECUAR JAMAIS MOTORS-Full.svg" alt="Recuar Jamais Motors" style="width:100%;max-width:240px;height:auto;display:block;margin:0 auto;"></div>
+    <div class="logo-main"><img src="LOGO-RECUAR JAMAIS MOTORS-Full.svg" alt="Recuar Jamais Motors" fetchpriority="high" style="width:100%;max-width:240px;height:auto;display:block;margin:0 auto;"></div>
   </div>
   <div class="sep" aria-hidden="true">
     <div class="sep-line"></div>

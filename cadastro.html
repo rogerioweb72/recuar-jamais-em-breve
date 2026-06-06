@@ -312,7 +312,8 @@
     </div>
     <div class="section-body">
       <div class="grid-2">
-        <div class="field"><label>Valor pedido (R$) <span class="req">*</span></label><input type="number" id="valor" placeholder="Ex: 95000" data-required></div>
+        <div class="field"><label>Valor Tabela FIPE (R$)</label><input type="number" id="valor_fipe" placeholder="Ex: 98000"></div>
+        <div class="field"><label>Valor Pedido (R$) <span class="req">*</span></label><input type="number" id="valor" placeholder="Ex: 95000" data-required></div>
         <div class="field"><label>Aceita negociação?</label><div class="radio-group"><label class="radio-item"><input type="radio" name="aceita_negociacao" value="Sim"><span>Sim</span></label><label class="radio-item"><input type="radio" name="aceita_negociacao" value="Não"><span>Não</span></label></div></div>
         <div class="field"><label>Nome do vendedor <span class="req">*</span></label><input type="text" id="nome_vendedor" placeholder="Nome completo" data-required></div>
         <div class="field"><label>Telefone / WhatsApp <span class="req">*</span></label><input type="tel" id="telefone" placeholder="(44) 99999-9999" data-required></div>
@@ -503,6 +504,7 @@ async function submitForm() {
     itens_vistoriados: getChecked('vistoria'),
     estado_geral: document.getElementById('estado_geral').value,
     obs_condicao: document.getElementById('obs_condicao').value,
+    valor_fipe: document.getElementById('valor_fipe').value,
     valor: document.getElementById('valor').value,
     aceita_negociacao: getRadio('aceita_negociacao'),
     nome_vendedor: document.getElementById('nome_vendedor').value,
